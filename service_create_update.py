@@ -14,11 +14,11 @@ docker_client = docker.DockerClient(base_url='unix:///var/run/docker.sock')
 def create_service(service_request):
     print('creating service using ' + service_request)
     
-    docker_client.service.create(image=service_request.image,
-                          name=service_request.name,
-                          hostname=service_request.hostname,
-                          mounts=service_request.mounts,
-                          networks=service_request.networks)
+    docker_client.service.create(image=service_request['image'],
+                          name=service_request['name'],
+                          hostname=service_request['hostname'],
+                          mounts=service_request['mounts'],
+                          networks=service_request['networks'])
 
     print('finished creating service')
     return {'status': 'created'}
@@ -29,11 +29,11 @@ def update_service(service, service_request):
     print(service)
     print('updating service ' + service_request)
 
-    service.update(image=service_request.image,
-                   name=service_request.name,
-                   hostname=service_request.hostname,
-                   mounts=service_request.mounts,
-                   networks=service_request.networks)
+    service.update(image=service_request['image'],
+                   name=service_request['name'],
+                   hostname=service_request['hostname'],
+                   mounts=service_request['mounts'],
+                   networks=service_request['networks'])
 
     print('finished updating service')
     return {'status': 'updated'}
@@ -44,7 +44,7 @@ def update_service(service, service_request):
 async def handle_service(request):
     service_request = await request.json()
 
-    services = docker_client.services.list(filter={'name': service_request.name})
+    services = docker_client.services.list(filter={'name': service_request['name']})
     if services :
         return web.json_response(update_service(services[1], service_request))
     else:
