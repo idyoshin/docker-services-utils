@@ -43,8 +43,8 @@ def update_service(service, service_request):
 
 async def handle_service(request):
     service_request = await request.json()
-
-    services = docker_client.services.list(filter={'name': service_request['name']})
+    print('performing update or create of the services ', service_request)
+    services = docker_client.services.list(filters={'name': service_request['name']})
     if services :
         return web.json_response(update_service(services[1], service_request))
     else:
