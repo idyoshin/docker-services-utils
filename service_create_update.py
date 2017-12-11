@@ -41,7 +41,7 @@ def update_service(service, service_request):
 
 
 
-async def handle_conversion(request):
+async def handle_service(request):
     service_request = await request.json()
 
     services = docker_client.services.list(filter={'name': service_request.name})
