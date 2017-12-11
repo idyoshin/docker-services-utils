@@ -12,7 +12,7 @@ import docker
 docker_client = docker.DockerClient(base_url='unix:///var/run/docker.sock')
 
 def create_service(service_request):
-    print('creating service using ' + service_request)
+    print('creating service using ', service_request)
     
     docker_client.service.create(image=service_request['image'],
                           name=service_request['name'],
@@ -27,7 +27,7 @@ def create_service(service_request):
 def update_service(service, service_request):
     print('updating service')
     print(service)
-    print('updating service ' + service_request)
+    print('updating service ', service_request)
 
     service.update(image=service_request['image'],
                    name=service_request['name'],
