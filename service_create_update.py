@@ -14,7 +14,7 @@ docker_client = docker.DockerClient(base_url='unix:///var/run/docker.sock')
 def create_service(service_request):
     print('creating service using ', service_request)
     
-    docker_client.service.create(image=service_request['image'],
+    docker_client.services.create(image=service_request['image'],
                           name=service_request['name'],
                           hostname=service_request['hostname'],
                           mounts=service_request['mounts'],
