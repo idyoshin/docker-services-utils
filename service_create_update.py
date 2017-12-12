@@ -5,6 +5,7 @@ import base64
 import uuid
 import os
 import socket
+import sys
 
 import docker
 
@@ -12,7 +13,7 @@ import docker
 docker_client = docker.DockerClient(base_url='unix:///var/run/docker.sock')
 
 def create_service(service_request):
-    print('creating service using ', service_request)
+    print('creating service using ', service_request, file=sys.stderr)
     
     docker_client.services.create(image=service_request['image'],
                           name=service_request['name'],
@@ -20,14 +21,14 @@ def create_service(service_request):
                           mounts=service_request['mounts'],
                           networks=service_request['networks'])
 
-    print('finished creating service')
+    print('finished creating service', file=sys.stderr)
     return {'status': 'created'}
 
 
 def update_service(service, service_request):
-    print('updating service')
-    print(service)
-    print('updating service ', service_request)
+    print('updating service', file=sys.stderr)
+    print(service, file=sys.stderr)
+    print('updating service ', service_request, file=sys.stderr)
 
     service.update(image=service_request['image'],
                    name=service_request['name'],
@@ -35,15 +36,16 @@ def update_service(service, service_request):
                    mounts=service_request['mounts'],
                    networks=service_request['networks'])
 
-    print('finished updating service')
+    print('finished updating service', file=sys.stderr)
     return {'status': 'updated'}
 
 
 
 
 async def handle_service(request):
+    print('got request in handle_service', request, file=sys.stderr)
     service_request = await request.json()
-    print('performing update or create of the services ', service_request)
+    print('performing update or create of the services ', service_request, file=sys.stderr)
     services = docker_client.services.list(filters={'name': service_request['name']})
     if services :
         return web.json_response(update_service(services[1], service_request))
