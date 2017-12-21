@@ -51,6 +51,12 @@ def remove_service(service) :
 async def handle_service(request):
     print('got request in handle_service', request, file=sys.stderr)
     service_request = await request.json()
+    if 'mounts' not in service_request : 
+        service_request['mounts'] = []
+
+    if 'networks' not in service_request :
+        service_request['networks'] = []
+
     print('performing update or create of the services ', service_request, file=sys.stderr)
     services = docker_client.services.list(filters={'name': service_request['name']})
     if services :
