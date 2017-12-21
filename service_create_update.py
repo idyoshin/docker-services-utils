@@ -40,6 +40,12 @@ def update_service(service, service_request):
     return {'status': 'updated'}
 
 
+def remove_service(service) :
+    print('removing service', service, file=sys.stderr)
+    service.remove()
+    print('finished removing service', file=sys.stderr)
+    return {'status': 'removed'}
+
 
 
 async def handle_service(request):
@@ -54,12 +60,55 @@ async def handle_service(request):
 
 
 
+async def handle_delete_service(request): 
+    print('got remove service request', request, file=sys.stderr)
+    service_request = await request.json()
+    services = docker_client.services.list(filters={'name': service_request['name']})
+    if services :
+        return web.json_response(remove_service(services[0]))
+    else:
+        return web.json_response({'status': 'service not found'})
+
+
+
+
+
+async def handle_create_network(request):
+    print("creating network", request, file=sys.stderr)
+    service_request = await request.json()
+    networks = docker_client.networks.list(filters={'name', service_request['name']})
+    if networks : 
+        return web.json_response({'status': 'already present'})
+    else:
+        docker_client.networks.create(name = service_request['name'])
+        return web.json_response({'status': 'created'})
+
+
+
+async def handle_remove_network(request) :
+    print('removing network', request, file=sys.stderr)
+    service_request = await request.json()
+    networks = docker_client.networks.list(filters={'name', service_request['name']})
+    if networks : 
+        for cont in networks[0].containers:
+            networks[0].disconnect(cont)
+        networks[0].remove()
+        return web.json_response({'status': 'disconnected and removed'})
+    else:
+        return web.json_response({'status': 'not present'})
+    
+
+
 loop = asyncio.get_event_loop()
 
 port = 6000
 
 app = web.Application()
 app.router.add_post("/service", handle_service)
+app.router.add_post("/service/remove", handle_delete_service)
+
+app.router.add_post("/network", handle_create_network)
+app.router.add_post("/network/remove", handle_remove_network)
 
 if __name__ == '__main__':
     handler = app.make_handler()
