@@ -14,12 +14,17 @@ docker_client = docker.DockerClient(base_url='unix:///var/run/docker.sock')
 
 def create_service(service_request):
     print('creating service using ', service_request, file=sys.stderr)
+
+    endpoint_spec = None
+    if (service_request['ports']) :
+        endpoint_spec = docker.EndpointSpec(ports=service_request['ports'])
     
     docker_client.services.create(image=service_request['image'],
                           name=service_request['name'],
                           hostname=service_request['hostname'],
                           mounts=service_request['mounts'],
-                          networks=service_request['networks'])
+                          networks=service_request['networks'], 
+                          endpoint_spec=endpoint_spec)
 
     print('finished creating service', file=sys.stderr)
     return {'status': 'created'}
@@ -30,11 +35,16 @@ def update_service(service, service_request):
     print(service, file=sys.stderr)
     print('updating service ', service_request, file=sys.stderr)
 
+    endpoint_spec = None
+    if (service_request['ports']) :
+        endpoint_spec = docker.EndpointSpec(ports=service_request['ports'])
+
     service.update(image=service_request['image'],
                    name=service_request['name'],
                    hostname=service_request['hostname'],
                    mounts=service_request['mounts'],
-                   networks=service_request['networks'])
+                   networks=service_request['networks'], 
+                   endpoint_spec= endpoint_spec)
 
     print('finished updating service', file=sys.stderr)
     return {'status': 'updated'}
