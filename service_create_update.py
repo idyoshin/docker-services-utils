@@ -18,7 +18,8 @@ def create_service(service_request):
 
     endpoint_spec = None
     if (service_request['ports']) :
-        endpoint_spec = docker.types.EndpointSpec(ports=service_request['ports'])
+        ports_data = {service_request['ports']['external']:service_request['ports']['internal']}
+        endpoint_spec = docker.types.EndpointSpec(ports=ports_data)
     
     docker_client.services.create(image=service_request['image'],
                           name=service_request['name'],
@@ -38,7 +39,8 @@ def update_service(service, service_request):
 
     endpoint_spec = None
     if (service_request['ports']) :
-        endpoint_spec = docker.types.EndpointSpec(ports=service_request['ports'])
+        ports_data = {service_request['ports']['external']:service_request['ports']['internal']}
+        endpoint_spec = docker.types.EndpointSpec(ports=ports_data)
 
     service.update(image=service_request['image'],
                    name=service_request['name'],
