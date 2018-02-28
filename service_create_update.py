@@ -8,6 +8,7 @@ import socket
 import sys
 
 import docker
+import docker.types
 
 
 docker_client = docker.DockerClient(base_url='unix:///var/run/docker.sock')
@@ -17,7 +18,7 @@ def create_service(service_request):
 
     endpoint_spec = None
     if (service_request['ports']) :
-        endpoint_spec = docker.EndpointSpec(ports=service_request['ports'])
+        endpoint_spec = docker.types.EndpointSpec(ports=service_request['ports'])
     
     docker_client.services.create(image=service_request['image'],
                           name=service_request['name'],
@@ -37,7 +38,7 @@ def update_service(service, service_request):
 
     endpoint_spec = None
     if (service_request['ports']) :
-        endpoint_spec = docker.EndpointSpec(ports=service_request['ports'])
+        endpoint_spec = docker.types.EndpointSpec(ports=service_request['ports'])
 
     service.update(image=service_request['image'],
                    name=service_request['name'],
